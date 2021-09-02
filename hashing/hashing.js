@@ -1,10 +1,10 @@
 "use strict";
 
-var crypto = require("crypto");
+const crypto = require("crypto");
 
 // The Power of a Smile
 // by Tupac Shakur
-var poem = [
+const poem = [
 	"The power of a gun can kill",
 	"and the power of fire can burn",
 	"the power of wind can chill",
@@ -27,6 +27,14 @@ Blockchain.blocks.push({
 	timestamp: Date.now(),
 });
 
+function createBlock (poem) {
+	var block = new Object();
+	block.index = Blockchain.blocks.length();
+	block.prevHash = Blockchain.blocks.length();
+	block.data =
+	block.timestamp =
+	hash =
+}
 // TODO: insert each line into blockchain
 // for (let line of poem) {
 // }
