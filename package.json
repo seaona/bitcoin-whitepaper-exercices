@@ -1,0 +1,22 @@
+{
+  "name": "bitcoin-whitepaper-exercises",
+  "version": "1.0.0",
+  "description": "In these exercises, you will learn about blockchains from the perspective of the [original Bitcoin Whitepaper](https://bitcoin.org/en/bitcoin-paper).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seaona/bitcoin-whitepaper-exercices.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seaona/bitcoin-whitepaper-exercices/issues"
+  },
+  "homepage": "https://github.com/seaona/bitcoin-whitepaper-exercices#readme",
+  "dependencies": {
+    "crypto": "^1.0.1"
+  }
+}
