@@ -45,8 +45,10 @@ async function addPoem() {
 	var transactions = [];
 
 	// TODO: add poem lines as authorized transactions
-	// for (let line of poem) {
-	// }
+	for (let line of poem) {
+		let tx = createTransaction(line)
+		transactions.push(tx)
+	}
 
 	var bl = createBlock(transactions);
 
@@ -70,6 +72,12 @@ function createBlock(data) {
 	bl.hash = blockHash(bl);
 
 	return bl;
+}
+
+function createTransaction(line) {
+	let tx = new Object();
+	tx.data = line
+	tx.hash = transactionHash(tx)
 }
 
 function transactionHash(tr) {

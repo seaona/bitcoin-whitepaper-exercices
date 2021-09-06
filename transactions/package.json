@@ -2,6 +2,6 @@
 	"name": "exercises-transactions",
 	"main": "transactions.js",
 	"dependencies": {
-		"openpgp": "~3.0.8"
+		"openpgp": "^5.0.0"
 	}
 }

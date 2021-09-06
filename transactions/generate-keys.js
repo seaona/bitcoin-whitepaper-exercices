@@ -7,8 +7,9 @@ var openpgp = require("openpgp");
 const KEYS_DIR = path.join(__dirname,"keys");
 
 var options = {
-	userIds: [{ name: "Bitcoin Whitepaper", email: "bitcoin@whitepaper.tld" }],
-	numBits: 2048,
+	type: 'rsa',
+	userIDs: [{ name: "Bitcoin Whitepaper", email: "bitcoin@whitepaper.tld" }],
+	rsaBits: 2048,
 	passphrase: "",
 };
 

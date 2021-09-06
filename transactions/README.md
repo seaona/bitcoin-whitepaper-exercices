@@ -2,6 +2,8 @@
 
 Similar to the previous Hashing exercise, in this exercise you will add the 8 lines of text from the provided poem to a blockchain. But this time, you will add each one as a separate transaction, authorize the transaction with a key and signature, and then add all 8 transactions to a single block. Finally, you'll validate the blockchain, including all the transaction signatures.
 
+Lib: https://www.npmjs.com/package/openpgp
+
 ## Setup
 
 Run `npm install` in this exercise folder to install the dependencies listed in the included `package.json` file.
