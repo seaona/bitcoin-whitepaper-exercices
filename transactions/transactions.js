@@ -47,7 +47,8 @@ async function addPoem() {
 	// TODO: add poem lines as authorized transactions
 	for (let line of poem) {
 		let tx = createTransaction(line)
-		transactions.push(tx)
+		let tx_auth = authorizeTransaction(tx)
+		transactions.push(tx_auth)
 	}
 
 	var bl = createBlock(transactions);
@@ -75,9 +76,10 @@ function createBlock(data) {
 }
 
 function createTransaction(line) {
-	let tx = new Object();
+	var tx = new Object();
 	tx.data = line
 	tx.hash = transactionHash(tx)
+	return tx;
 }
 
 function transactionHash(tr) {
@@ -86,15 +88,31 @@ function transactionHash(tr) {
 	).digest("hex");
 }
 
-async function createSignature(text,privKey) {
-	var privKeyObj = openpgp.key.readArmored(privKey).keys[0];
+async function authorizeTransaction(tx) {
+	tx.pubKey = PUB_KEY_TEXT 
+	tx.signature = await createSignature(tx.data, PRIV_KEY_TEXT)
+	return tx;
+}
 
-	var options = {
-		data: text,
-		privateKeys: [privKeyObj],
-	};
+async function createSignature(msg, privKey) {
+	const passphrase = `super long and hard to guess secret`; // what the private key is encrypted with
+    const privateKey = await openpgp.decryptKey({
+        privateKey: await openpgp.readPrivateKey({ armoredKey: privKey }),
+        passphrase
+    });
+	const unsignedMessage = await openpgp.createCleartextMessage({ text: `${msg}`});
+	const cleartextMessage = await openpgp.sign({
+        message: unsignedMessage, // CleartextMessage or Message object
+        signingKeys: privateKey
+    });
+    console.log(cleartextMessage); // '-----BEGIN PGP SIGNED MESSAGE ... END PGP SIGNATURE-----'
 
-	return (await openpgp.sign(options)).data;
+    const signedMessage = await openpgp.readCleartextMessage({
+        cleartextMessage // parse armored message
+    });
+
+	console.log(signedMessage)
+	return signedMessage;
 }
 
 async function verifySignature(signature,pubKey) {

@@ -1,23 +1,26 @@
 "use strict";
 
-var path = require("path");
-var fs = require("fs");
-var openpgp = require("openpgp");
+const path = require("path");
+const fs = require("fs");
+const openpgp = require("openpgp");
 
 const KEYS_DIR = path.join(__dirname,"keys");
 
-var options = {
-	type: 'rsa',
-	userIDs: [{ name: "Bitcoin Whitepaper", email: "bitcoin@whitepaper.tld" }],
-	rsaBits: 2048,
-	passphrase: "",
-};
+const generateKeys = async () => {
+    await openpgp.generateKey({
+        type: 'rsa', // Type of the key
+        rsaBits: 4096, // RSA key size (defaults to 4096 bits)
+        userIDs: [{ name: 'Jon Smith', email: 'jon@example.com' }], // you can pass multiple user IDs
+        passphrase: 'super long and hard to guess secret' // protects the private key
+    })
 
-openpgp.generateKey(options).then(function onGenerated(key) {
-	try { fs.mkdirSync(KEYS_DIR); } catch (err) {}
+	.then( keys => {	
+		fs.mkdirSync(KEYS_DIR)
+		fs.writeFileSync(path.join(KEYS_DIR,"priv.pgp.key"), keys.privateKey,"utf8")
+		fs.writeFileSync(path.join(KEYS_DIR,"pub.pgp.key"), keys.publicKey,"utf8")
 
-	fs.writeFileSync(path.join(KEYS_DIR,"priv.pgp.key"),key.privateKeyArmored,"utf8");
-	fs.writeFileSync(path.join(KEYS_DIR,"pub.pgp.key"),key.publicKeyArmored,"utf8");
+		console.log("Keypair generated.");
+	})
+}
 
-	console.log("Keypair generated.");
-});
+generateKeys()
