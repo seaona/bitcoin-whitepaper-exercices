@@ -105,13 +105,13 @@ async function createSignature(msg, privKey) {
         message: unsignedMessage, // CleartextMessage or Message object
         signingKeys: privateKey
     });
-    console.log(cleartextMessage); // '-----BEGIN PGP SIGNED MESSAGE ... END PGP SIGNATURE-----'
+    //console.log(cleartextMessage); // '-----BEGIN PGP SIGNED MESSAGE ... END PGP SIGNATURE-----'
 
     const signedMessage = await openpgp.readCleartextMessage({
         cleartextMessage // parse armored message
     });
 
-	console.log(signedMessage)
+	//console.log(signedMessage)
 	return signedMessage;
 }
 
@@ -155,6 +155,9 @@ async function verifyBlock(bl) {
 		if (!Array.isArray(bl.data)) return false;
 
 		// TODO: verify transactions in block
+		for(let tx of bl.data) {
+			console.log(JSON.stringify(bl.data[tx]))
+		}
 	}
 
 	return true;
