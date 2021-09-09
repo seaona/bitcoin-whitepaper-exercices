@@ -47,19 +47,18 @@ async function addPoem() {
 	// TODO: add poem lines as authorized transactions
 	for (let line of poem) {
 		let tx = createTransaction(line)
-		let tx_auth = authorizeTransaction(tx)
+		let tx_auth = await authorizeTransaction(tx)
 		transactions.push(tx_auth)
 	}
 
 	var bl = createBlock(transactions);
-
 	Blockchain.blocks.push(bl);
 
 	return Blockchain;
 }
 
 async function checkPoem(chain) {
-	console.log(await verifyChain(chain));
+	console.log("Blockchain is correct", await verifyChain(chain));
 }
 
 function createBlock(data) {
@@ -111,24 +110,26 @@ async function createSignature(msg, privKey) {
         cleartextMessage // parse armored message
     });
 
-	//console.log(signedMessage)
 	return signedMessage;
 }
 
-async function verifySignature(signature,pubKey) {
-	try {
-		let pubKeyObj = openpgp.key.readArmored(pubKey).keys[0];
+async function verifySignature(signedMessage, pubKey) {
+	const verificationResult = await openpgp.verify({
+        message: signedMessage,
+        verificationKeys: pubKey
+    });
+    const { verified, keyID } = verificationResult.signatures[0];
 
-		let options = {
-			message: openpgp.cleartext.readArmored(signature),
-			publicKeys: pubKeyObj,
-		};
 
-		return (await openpgp.verify(options)).signatures[0].valid;
-	}
-	catch (err) {}
+    try {
+        await verified; // throws on invalid signature
+        console.log('Signed by key id ' + keyID.toHex());
+		return true
+    } catch (e) {
+        throw new Error('Signature could not be verified: ' + e.message);
+    }
 
-	return false;
+	
 }
 
 function blockHash(bl) {
@@ -154,10 +155,29 @@ async function verifyBlock(bl) {
 		if (bl.hash !== blockHash(bl)) return false;
 		if (!Array.isArray(bl.data)) return false;
 
-		// TODO: verify transactions in block
+		// Verify transactions in block
 		for(let tx of bl.data) {
-			console.log(JSON.stringify(bl.data[tx]))
+			if(transactionHash(tx) !== tx.hash) {
+				console.log("Transaction hash does is not correct")
+				return false
+			}
+
+			if(!tx.pubKey) {
+				console.log("Missing public key of the transaction")
+				return false
+			}
+
+			if(!tx.signature) {
+				console.log("Missing signature of the transaction")
+				return false
+			}
+
+			if(await verifySignature(tx.signature, tx.pubKey) === false) {
+				console.log("Signature not correct")
+				return false
+			}
 		}
+		
 	}
 
 	return true;
